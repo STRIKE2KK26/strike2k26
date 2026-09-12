@@ -1,11 +1,10 @@
 ﻿
-# Auto-Elevate to Administrator (chỉ chạy khi có đường dẫn file thật)
+# Auto-Elevate to Administrator (chi chay khi co duong dan file that)
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     if ($PSCommandPath) {
         try { Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -WindowStyle Hidden -File `"$PSCommandPath`"" -Verb RunAs } catch {}
         Exit
     }
-    # Nếu chạy từ xa (không có $PSCommandPath) thì cứ tiếp tục, không thoát
 }
 
 # Force TLS 1.2 Security Protocol for HTTPS requests
@@ -25,7 +24,7 @@ public class Win32 {
 Add-Type -TypeDefinition $code
 [Win32]::ShowWindow([Win32]::GetConsoleWindow(), 0) | Out-Null
 
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$ScriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { [System.AppDomain]::CurrentDomain.BaseDirectory }
 if (-not $scriptDir) { $scriptDir = $PWD.Path }
 $wpfGifPath = Join-Path $scriptDir "WpfAnimatedGif.dll"
 if (Test-Path $wpfGifPath) {
