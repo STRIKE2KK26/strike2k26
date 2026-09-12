@@ -1,11 +1,11 @@
 ﻿
-# Auto-Elevate to Administrator
+# Auto-Elevate to Administrator (chỉ chạy khi có đường dẫn file thật)
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    $scriptPath = if ($PSCommandPath) { $PSCommandPath } else { $MyInvocation.MyCommand.Path }
-    if ($scriptPath) {
-        try { Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scriptPath`"" -Verb RunAs } catch {}
+    if ($PSCommandPath) {
+        try { Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -WindowStyle Hidden -File `"$PSCommandPath`"" -Verb RunAs } catch {}
+        Exit
     }
-    Exit
+    # Nếu chạy từ xa (không có $PSCommandPath) thì cứ tiếp tục, không thoát
 }
 
 # Force TLS 1.2 Security Protocol for HTTPS requests
